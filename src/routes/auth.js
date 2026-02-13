@@ -9,11 +9,11 @@ const { userAuth } = require("../middleware");
 const authRouter = Router();
 
 authRouter.post("/login", async (req, res) => {
-//  if (!req.body) {
-//   //  res.status(400).send({ success: false, data: "Bad Request" });
-//    return
-//  }
-  
+  //  if (!req.body) {
+  //   //  res.status(400).send({ success: false, data: "Bad Request" });
+  //    return
+  //  }
+
   const { email, password } = req.body || {};
 
   try {
@@ -108,6 +108,12 @@ authRouter.post("/refresh-token", async (req, res) => {
     const status = error.status || 500;
     res.status(status).json(catchMessage(false, error));
   }
+});
+
+authRouter.post("/verify-user", userAuth, async (req, res) => {
+   const {user} = req.user
+    res.status(200).json({ success: true, data: "Valid User" });
+
 });
 
 module.exports = { authRouter };
