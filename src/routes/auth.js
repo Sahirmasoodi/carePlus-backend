@@ -37,15 +37,16 @@ authRouter.post("/login", async (req, res) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      secure: false, // change this
+      sameSite: "lax", // change this
       maxAge: 1 * 24 * 60 * 60 * 1000,
     });
+
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      secure: false, // change this
+      sameSite: "lax", // change this
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     res.status(200).send({ success: true, data: user });
   } catch (error) {
@@ -99,8 +100,8 @@ authRouter.post("/refresh-token", async (req, res) => {
     });
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
+      secure: false, // change this
+      sameSite: "lax", // change this
       maxAge: 1 * 24 * 60 * 60 * 1000,
     });
     res.status(200).json({ success: true, data: "Logged in successfully." });
@@ -111,9 +112,8 @@ authRouter.post("/refresh-token", async (req, res) => {
 });
 
 authRouter.post("/verify-user", userAuth, async (req, res) => {
-   const {user} = req.user
-    res.status(200).json({ success: true, data: "Valid User" });
-
+  const { user } = req.user;
+  res.status(200).json({ success: true, data: "Valid User" });
 });
 
 module.exports = { authRouter };
