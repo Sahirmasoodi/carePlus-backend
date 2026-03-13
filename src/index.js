@@ -5,11 +5,13 @@ const cookieParser = require("cookie-parser");
 const { authRouter } = require("./routes/auth");
 const { appointmentRouter } = require("./routes/appointments");
 const { userRouter } = require("./routes/user");
+const dotenv = require("dotenv");
 const cors = require("cors");
 const app = express();
+dotenv.config();
 app.use(
   cors({
-    origin: "http://localhost:5174",
+    origin: ["http://51.20.44.129", "http://localhost:5173"],
     credentials: true,
   }),
 );
