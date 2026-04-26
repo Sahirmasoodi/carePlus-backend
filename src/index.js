@@ -40,16 +40,15 @@ app.use("/public", publicRouter);
 app.use("/patient", patientRouter);
 
 const PORT = process.env.PORT || 3333;
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+// ✅ Then connect DB
 connectDB()
   .then(() => {
     console.log("Connected Db Successfully");
-    server.listen(PORT, () => {
-     console.log(`Server running on port ${PORT}`);
-    });
   })
   .catch((err) => {
-  console.error("DB Connection Error:", err);
-    console.log("Connection failed on Port 3333");
+    console.error("DB Connection Failed:", err);
   });
-
-
