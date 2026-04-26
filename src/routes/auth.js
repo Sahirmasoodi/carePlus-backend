@@ -35,17 +35,19 @@ authRouter.post("/login", async (req, res) => {
       expiresIn: "7d",
     });
 
+    const isProduction = process.env.NODE_ENV === "production";
+
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false, // change this
-      sameSite: "lax", // change this
+      secure: isProduction, 
+      sameSite: isProduction ? "none" : "lax",
       maxAge: 1 * 24 * 60 * 60 * 1000,
     });
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: false, // change this
-      sameSite: "lax", // change this
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     res.status(200).send({ success: true, data: user });
