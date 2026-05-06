@@ -15,7 +15,7 @@ const messageSchema = new mongoose.Schema(
       type: String,
     },
   },
-  { timestamps: true },
+  { _id: false },
 );
 const chatSchema = new mongoose.Schema({
   participants: [

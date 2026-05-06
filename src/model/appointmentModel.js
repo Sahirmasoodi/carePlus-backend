@@ -1,5 +1,16 @@
 const mongoose = require("mongoose");
 
+const appointmentTimeSchema = new mongoose.Schema(
+  {
+    appointmentStartTime: {
+      type: Date
+    },
+    appointmentEndTime: {
+      type: Date
+    },
+  }
+);
+
 const appointmentSchema = new mongoose.Schema(
   {
     patient: {
@@ -13,12 +24,8 @@ const appointmentSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    appointmentStartTime: {
-      type: Date,
-    },
-    appointmentEndTime: {
-      type: Date,
-    },
+
+   appointmentTime: [appointmentTimeSchema],
 
     reason: {
       type: String,
@@ -42,7 +49,7 @@ const appointmentSchema = new mongoose.Schema(
       default: "pending",
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const AppointmentModel = mongoose.model("Appointment", appointmentSchema);

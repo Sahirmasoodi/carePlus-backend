@@ -10,17 +10,55 @@ const appointmentRouter = express.Router();
 
 appointmentRouter.post("/appointment/create", userAuth, async (req, res) => {
   try {
-    await appointmentValidations(req.body);
-    const appointment = await AppointmentModel({
-      ...req.body,
+    const { doctor, patient, appointmentTime } = req.body;
+
+    // await appointmentValidations(req.body);
+
+    let existingAppointment = await AppointmentModel.findOne({
+      doctor,
+      patient,
     });
+
+    if (existingAppointment) {
+      existingAppointment.appointmentTime.push({
+        appointmentStartTime: appointmentTime.appointmentStartTime,
+        appointmentEndTime: appointmentTime.appointmentEndTime,
+      });
+
+      await existingAppointment.save();
+
+      await existingAppointment.populate([
+        { path: "doctor", select: "firstName lastName" },
+        { path: "patient", select: "firstName lastName" },
+      ]);
+
+      return res.status(200).json({
+        success: true,
+        message: "Appointment time added to existing record",
+        data: existingAppointment,
+      });
+    }
+
+    const appointment = new AppointmentModel({
+      ...req.body,
+      appointmentTime: [
+        {
+          appointmentStartTime: appointmentTime.appointmentStartTime,
+          appointmentEndTime: appointmentTime.appointmentEndTime,
+        },
+      ],
+    });
+
     await appointment.save();
+
     await appointment.populate([
       { path: "doctor", select: "firstName lastName" },
       { path: "patient", select: "firstName lastName" },
     ]);
+
     res.status(201).json({
       success: true,
+      message: "New appointment created",
       data: appointment,
     });
   } catch (error) {
