@@ -5,6 +5,12 @@ const messageSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       required: true,
     },
+    fullName: {
+      type: String,
+    },
+    time: {
+      type: Date,
+    },
     text: {
       type: String,
     },
@@ -15,7 +21,7 @@ const chatSchema = new mongoose.Schema({
   participants: [
     { type: mongoose.Schema.Types.ObjectId, required: true, ref: "User" },
   ],
-  messages: [{ type: String }],
+  messages: [messageSchema],
 });
 const ChatModel = mongoose.model("Chat", chatSchema);
 module.exports = ChatModel;

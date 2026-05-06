@@ -14,8 +14,10 @@ const handleSocket = (server) => {
 
       socket.join(roomId);
     });
-    socket.on("sendMessage", async ({ senderId, recieverId, text }) => {
+    socket.on("sendMessage", async ({ senderId, recieverId, messageData }) => {
       try {
+        console.log(messageData);
+        
         const roomId = [senderId, recieverId].sort().join("_");
         let chat = await ChatModel.findOne({
           participants: { $all: [senderId, recieverId] },
@@ -24,12 +26,12 @@ const handleSocket = (server) => {
         if (!chat) {
           chat = await new ChatModel({
             participants: [senderId, recieverId],
-            messages: [text],
+            messages: [messageData],
           });
         }
-        chat.messages.push(text);
+        chat.messages.push(messageData);
         await chat.save();
-        io.to(roomId).emit("messageRecieved", { messageData: text });
+        io.to(roomId).emit("messageRecieved", { messageData });
       } catch (error) {
         console.log(error.message);
       }
