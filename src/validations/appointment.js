@@ -16,19 +16,24 @@ const isDoctorValid = async (doctor) => {
 const appointmentTimeValidation = async (
   appointmentStartTime,
   appointmentEndTime,
-  doctor
+  doctor,
 ) => {
+  const startTime = new Date(appointmentStartTime);
+  const endTime = new Date(appointmentEndTime);
   const isAppointmentValid = await AppointmentModel.findOne({
     doctor,
     status: { $ne: "cancelled" },
-    appointmentStartTime: { $lt: appointmentEndTime },
-    appointmentEndTime: { $gt: appointmentStartTime },
+    appointmentTime: {
+      $elemMatch: {
+        appointmentStartTime: { $lt: endTime },
+        appointmentEndTime: { $gt: startTime },
+      },
+    },
   });
   if (isAppointmentValid) {
     throw new AppError("Selected time slot is already booked", 409);
   }
-  const startTime = new Date(appointmentStartTime);
-  const endTime = new Date(appointmentEndTime);
+
   if (startTime > endTime) {
     throw new AppError("Start time must be before the end time", 400);
   }
@@ -45,8 +50,7 @@ const appointmentValidations = async (data) => {
     reason,
     consultationType,
     meetingLink,
-    appointmentStartTime,
-    appointmentEndTime,
+    appointmentTime,
     status,
   } = data;
   const allowedFields = [
@@ -56,24 +60,17 @@ const appointmentValidations = async (data) => {
     "consultationType",
     "meetingLink",
     "status",
-    "appointmentStartTime",
-    "appointmentEndTime",
+    "appointmentTime",
   ];
 
   const isValidRequest = Object.keys(data).every((key) =>
-    allowedFields.includes(key)
+    allowedFields.includes(key),
   );
   if (!isValidRequest) {
     throw new AppError("Bad Request", 400);
   }
-  if (
-    !patient ||
-    !doctor ||
-    !status ||
-    !appointmentStartTime ||
-    !appointmentEndTime
-  ) {
-    throw new AppError("Bad Request", 400);
+  if (!patient || !doctor || !status || !appointmentTime) {
+    throw new AppError("Missing required fields", 400);
   }
 
   const isPatientValid = await UserModel.findOne({
@@ -89,9 +86,9 @@ const appointmentValidations = async (data) => {
     throw new AppError("Bad Request", 400);
   }
   await appointmentTimeValidation(
-    appointmentStartTime,
-    appointmentEndTime,
-    doctor
+    appointmentTime.appointmentStartTime,
+    appointmentTime.appointmentEndTime,
+    doctor,
   );
   //   if (consultationType == "online" && !meetingLink) {
   //     throw new AppError("Meeting Link is required for online mode", 400);
@@ -124,7 +121,7 @@ const updateAppointmentValidations = async (params, body) => {
   ];
 
   const isValidRequest = Object.keys(body).every((k) =>
-    allowedFields.includes(k)
+    allowedFields.includes(k),
   );
   if (!isValidRequest) {
     throw new AppError("Bad Request", 400);
@@ -148,7 +145,7 @@ const updateAppointmentValidations = async (params, body) => {
     await appointmentTimeValidation(
       appointmentStartTime,
       appointmentEndTime,
-      doctor || isAppointmentValid.doctor
+      doctor || isAppointmentValid.doctor,
     );
   }
   return isAppointmentValid;
