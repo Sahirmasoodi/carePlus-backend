@@ -6,6 +6,7 @@ const { authRouter } = require("./routes/auth");
 const { appointmentRouter } = require("./routes/appointments");
 const { userRouter } = require("./routes/user");
 const { publicRouter } = require("./routes/public");
+const { chatRouter } = require("./routes/chat");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const handleSocket = require("./utils/socket");
@@ -38,6 +39,7 @@ app.use("/", appointmentRouter);
 app.use("/", userRouter);
 app.use("/public", publicRouter);
 app.use("/patient", patientRouter);
+app.use("/chat", chatRouter);
 
 const PORT = process.env.PORT || 3333;
 server.listen(PORT, () => {
