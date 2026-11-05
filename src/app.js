@@ -14,9 +14,10 @@ app.disable("x-powered-by");
 app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
 app.use(
   cors({
-    origin: (process.env.CLIENT_URL || "http://localhost:5173")
-      .split(",")
-      .map((x) => x.trim()),
+    origin: [
+      "http://localhost:5173",
+      "https://docprescripto.netlify.app",
+    ],
     credentials: true,
   }),
 );
