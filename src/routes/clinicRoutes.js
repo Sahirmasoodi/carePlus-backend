@@ -1,0 +1,10 @@
+const router = require("express").Router();
+const { protect, requireHospital } = require("../middleware/authMiddleware");
+router.use(protect, requireHospital);
+router.use("/", require("./dashboardRoutes"));
+router.use("/", require("./peopleRoutes"));
+router.use("/appointments", require("./appointmentRoutes"));
+router.use("/prescriptions", require("./prescriptionRoutes"));
+router.use("/chats", require("./chatRoutes"));
+router.use("/notifications", require("./notificationRoutes"));
+module.exports = router;
