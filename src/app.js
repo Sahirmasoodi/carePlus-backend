@@ -14,10 +14,7 @@ app.disable("x-powered-by");
 app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://docprescripto.netlify.app",
-    ],
+    origin: ["http://localhost:5173", "https://docprescripto.netlify.app"],
     credentials: true,
   }),
 );
@@ -31,16 +28,7 @@ app.get("/health", (req, res) =>
     timestamp: new Date().toISOString(),
   }),
 );
-app.use(
-  "/api/auth",
-  rateLimit({
-    windowMs: 15 * 60 * 1000,
-    limit: 100,
-    standardHeaders: "draft-8",
-    legacyHeaders: false,
-  }),
-  authRoutes,
-);
+app.use("/api/auth", authRoutes);
 app.use("/api/public", publicRoutes);
 app.use("/api/platform", platformRoutes);
 app.use("/api/clinic", clinicRoutes);
